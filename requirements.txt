@@ -1,0 +1,4 @@
+gnews
+pyspark # Java JDK is required for PySpark
+newspaper3k
+numpy
