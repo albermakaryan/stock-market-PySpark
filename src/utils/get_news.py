@@ -48,13 +48,10 @@ def get_stock_news(stock:str,
         
         
         google_news = GNews()
-        # google_news.period = '7d'  # News from last 7 days
-#        google_news.max_results = 10  # number of responses across a keyword
-        google_news.country = 'United States'  # News from a specific country 
-        google_news.language = 'english'  # News in a specific language
-        # google_news.exclude_websites = ['yahoo.com', 'cnn.com']  # Exclude news from specific website i.e Yahoo.com and CNN.com
-        google_news.start_date = start_date # Search from 1st Jan 2020
-        google_news.end_date = end_date # Search until 1st March 2020
+        google_news.country = 'United States'  #  
+        google_news.language = 'english'  # 
+        google_news.start_date = start_date # 
+        google_news.end_date = end_date # 
         
         results = google_news.get_news(stock)
         print("Number of articles:",len(results))
@@ -72,7 +69,8 @@ def get_stock_news(stock:str,
             result['publisher'] = result['publisher']['title']
             result['article'] = full_article
 
-            file_name = stock + "_"+start_date.strftime("%d-%B-%Y")+"-"+end_date.strftime("%d-%B-%Y")+"_"+str(row_i)+".json"
+            file_name = stock + "_"+start_date.strftime("%d-%B-%Y")+\
+                        "-"+end_date.strftime("%d-%B-%Y")+"_"+str(row_i)+".json"
 
             file_path = os.path.join(dir_to_save,file_name)
 
