@@ -215,6 +215,15 @@ def prepare_mix_data_lstm(scores,stock='NVIDIA',spark=None,train_size=0.8):
     df = df.dropna()
 
 
+
+        
+    return df
+
+
+
+def split_data_lstm(df,train_size=0.8,spark=None):
+    
+    
     n = df.count()
     train_size = int(n*train_size)
 
@@ -234,11 +243,11 @@ def prepare_mix_data_lstm(scores,stock='NVIDIA',spark=None,train_size=0.8):
     X_test = np.array(X_test.rdd.map(lambda x: [x.afinn_sentiment,x.pnn_sentiment,x.price_percent_change,x.volume_percent_change]).collect())
     y_test = np.array(y_test.rdd.map(lambda x: [x.next_day_price_percent_change_shifted]).collect())
     
-    sc = spark.sparkContext
-    simple_rdd = to_simple_rdd(sc, X_train,y_train)
+    # sc = spark.sparkContext
+    # simple_rdd = to_simple_rdd(sc, X_train,y_train)
 
-        
-    return df, X_train, y_train, X_test, y_test, simple_rdd
+
+    return X_train, y_train, X_test, y_test
 
     
 
