@@ -29,12 +29,16 @@ from pyspark.sql.types import *
 from pyspark.ml.feature import StandardScaler
 from pyspark.sql.window import Window
 from elephas.utils.rdd_utils import to_simple_rdd
+import warnings
+
+# Ignore all warnings
+warnings.filterwarnings("ignore")
 
 
 
 def get_scores(column='article',stock='Tesla',spark=None):
     
-    
+    spark.sparkContext.setLogLevel("OFF")
 
     data = spark.read.option("header","true").json("../data/json/"+stock)
 
@@ -146,14 +150,16 @@ def get_scores(column='article',stock='Tesla',spark=None):
     result = result.select('date','afinn_sentiment','pnn_sentiment')
 
 
+    result = result.sort(result["date"])
+
     
 
     return result
 
 
-def prepare_price(stock,start_date=None,end_date=None,spark=None):
+def prepare_price(stock,start_date=None,end_date=None,spark=None,inference=True):
     
-
+    spark.sparkContext.setLogLevel("OFF")
 
     price = yq.Ticker(stock).history(start=start_date,end=end_date).reset_index()
     # return price
@@ -187,15 +193,19 @@ def prepare_price(stock,start_date=None,end_date=None,spark=None):
     
     price_df = price_df.select('date','price_percent_change','volume_percent_change')   
     price_df = price_df.withColumn("next_day_price_percent_change_shifted", F.lead("price_percent_change", 1).over(window_spec))
+    
+    if inference:
+        price_df = price_df.withColumn("next_day_price_percent_change_shifted",\
+            F.when(price_df["next_day_price_percent_change_shifted"].isNull(), 0).otherwise(price_df["next_day_price_percent_change_shifted"]))
 
 
     return price_df
 
 
 
-def prepare_mix_data_lstm(scores,stock='NVIDIA',spark=None,train_size=0.8):
+def prepare_mix_data_lstm(scores,stock='NVIDIA',spark=None,train_size=0.8,inference=True):
     
-    
+    spark.sparkContext.setLogLevel("OFF")
         
     tickers = {"NVIDIA":"NVDA",
               "Bitcoin":"BTC-USD",
@@ -212,8 +222,12 @@ def prepare_mix_data_lstm(scores,stock='NVIDIA',spark=None,train_size=0.8):
     price_df = prepare_price(stock,min_date,max_date,spark=spark)
 
     df = scores.join(price_df, on="date", how="right")
+    
+    if inference:
+        df = df.withColumn("next_day_price_percent_change_shifted", F.when(df["next_day_price_percent_change_shifted"].isNull(), 0).otherwise(df["next_day_price_percent_change_shifted"]))
     df = df.dropna()
-
+        
+    df = df.sort(df["date"])
 
 
         

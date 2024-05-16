@@ -31,7 +31,7 @@ def get_stock_news(stock:str,
     
     # start_date = dt.datetime(start_year, start_month, start_day)
 
-    dir_to_save = os.path.join("../data/json/",stock)
+    dir_to_save = os.path.join("../data/json/",stock) if dir_to_save is None else dir_to_save
 
     if not os.path.exists(dir_to_save):
         os.makedirs(dir_to_save)

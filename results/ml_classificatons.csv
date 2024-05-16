@@ -1,0 +1,13 @@
+model,stock,emotion,accuracy
+SVM,Apple,False,0.510929
+SVM,Apple,True,0.510929
+SVM,NVIDIA,False,0.5745856
+SVM,NVIDIA,True,0.5745856
+RandomForest,Apple,False,0.52459013
+RandomForest,Apple,True,0.5081967
+RandomForest,NVIDIA,False,0.5055249
+RandomForest,NVIDIA,True,0.5690608
+GradientBoosting,Apple,False,0.5041974
+GradientBoosting,Apple,True,0.52358615
+GradientBoosting,NVIDIA,False,0.5159996
+GradientBoosting,NVIDIA,True,0.5127685
